@@ -1,0 +1,62 @@
+﻿@page "/"
+@using Login.Pages.Models;
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage
+@inject ProtectedSessionStorage ProtectedSessionStore
+@inject NavigationManager Navigation
+@inject IJSRuntime js
+
+
+@if (!isAltwitted)
+{
+    <div hidden="@isAltwitted" class="content">
+        <h1>Just start write what you want!</h1>
+
+        <EditForm Model="@form" OnValidSubmit="@HandleValidSubmit" class="engagment">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <InputTextArea @bind-Value="form.Altweet" />
+
+            <button type="submit">Submit</button>
+        </EditForm>
+    </div>
+}
+else
+{
+    <div class="content">
+        <h1>Great! You've made your first step!</h1>
+        <div class="row">
+            <div class="column">
+                Don't have an account?
+                <button type="button" onclick="@(() => NavigateUser("/signup"))">Create</button>
+            </div>
+            <div class="column">
+                Already have an account?
+                <button type="button" onclick="@(() => NavigateUser("/login"))">Login</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    private EngagmentForm form = new();
+    private bool isAltwitted = false;
+
+    private async Task HandleValidSubmit()
+    {
+        await ProtectedSessionStore.SetAsync("first_tweet", form.Altweet);
+        isAltwitted = true;
+    }
+
+    private void NavigateUser(string pageName)
+    {
+        Navigation.NavigateTo(pageName);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ProtectedSessionStore.GetAsync<string>("first_tweet");
+        isAltwitted = result.Success;
+    }
+}
