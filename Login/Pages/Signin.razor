@@ -1,0 +1,26 @@
+﻿@page "/login"
+@using Login.Pages.Models;
+@using Microsoft.AspNetCore.Components.Forms
+
+<h3>Welcome back, pal!</h3>
+
+<div class="login">
+    <EditForm Model="@form" OnValidSubmit="@HandleValidSubmit">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <InputText @bind-Value="form.Nickname"></InputText>
+        <InputText type="password" @bind-Value="form.Password"></InputText>
+    
+        <button type="submit">Submit</button>
+    </EditForm>
+</div>
+
+@code {
+    private LoginForm form = new();
+
+    private async Task HandleValidSubmit()
+    {
+        //TO-DO: Request to login    
+    }
+}
